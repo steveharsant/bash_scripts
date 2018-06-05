@@ -25,6 +25,10 @@ HINT=${BLUE}'HINT:'${WHITE} #HINT MESSAGES
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPTNAME=`basename "$0"`
 
+#Human Readable Variables#
+#------------------------#
+SSID=$1
+
 #Script Arguements#
 #-----------------#
 
@@ -49,7 +53,7 @@ done
 
 #If No Arguements Are Passed Output Info#
 #---------------------------------------#
-if [[ -z $1 ]]; then
+if [[ -z $SSID ]]; then
   echo "WiFi Password Extractor"
   echo "Usage: wfp [SSID NAME]"
   #echo " "
@@ -83,10 +87,10 @@ fi
 
 #Check For Config and Display Password#
 #-------------------------------------#
-if [[ -f /etc/NetworkManager/system-connections/$1 ]]
+if [[ -f /etc/NetworkManager/system-connections/$SSID ]]
   then
-    PSK=`sudo cat /etc/NetworkManager/system-connections/$1 | grep psk= | sed 's/^.\{4\}//g'`
-    printf "Password for ${YELLOW}$1${WHITE} is ${GREEN}$PSK${WHITE} \n"
+    PSK=`sudo cat /etc/NetworkManager/system-connections/$SSID | grep psk= | sed 's/^.\{4\}//g'`
+    printf "Password for ${YELLOW}$SSID${WHITE} is ${GREEN}$PSK${WHITE} \n"
   else
-    printf "${FAIL} No password for ${YELLOW}$1${WHITE} found \n"
+    printf "${FAIL} No known system connection for ${YELLOW}$SSID${WHITE} \n"
 fi

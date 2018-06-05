@@ -4,7 +4,7 @@
 #                 WFP: WiFi Password                #
 #               Author: Steven Harsant              #
 #                  Date: 5/6/2018                   #
-#                   Version: 1.1                    #
+#                   Version: 1.2                    #
 #===================================================#
 
 #Set Colour Variables For Output#
@@ -25,11 +25,32 @@ HINT=${BLUE}'HINT:'${WHITE} #HINT MESSAGES
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPTNAME=`basename "$0"`
 
+while getopts ":l:" opt; do
+  case $opt in
+    l)
+      echo "-l does not accept parameters" >&2
+      exit 1
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      ls /etc/NetworkManager/system-connections >&2
+      exit 0
+      ;;
+  esac
+done
+
+
 #If No Arguements Are Passed Output Info#
 #---------------------------------------#
 if [[ -z $1 ]]; then
-  printf "WiFi Password Extractor \n"
-  printf "Usage: wfp [SSID NAME] \n"
+  echo "WiFi Password Extractor"
+  echo "Usage: wfp [SSID NAME]"
+  #echo " "
+  echo "Options:"
+  echo " -l     List all known WiFi access points"
 
   if [[ ! -f /usr/bin/wfp ]]; then
     printf "First run prompts to be installed to /usr/bin/ \n"

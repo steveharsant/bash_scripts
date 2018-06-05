@@ -25,6 +25,10 @@ HINT=${BLUE}'HINT:'${WHITE} #HINT MESSAGES
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPTNAME=`basename "$0"`
 
+#Script Arguements#
+#-----------------#
+
+# -l Lists all known system connections
 while getopts ":l:" opt; do
   case $opt in
     l)
@@ -50,7 +54,7 @@ if [[ -z $1 ]]; then
   echo "Usage: wfp [SSID NAME]"
   #echo " "
   echo "Options:"
-  echo " -l     List all known WiFi access points"
+  echo " -l     List all known system connections"
 
   if [[ ! -f /usr/bin/wfp ]]; then
     printf "First run prompts to be installed to /usr/bin/ \n"

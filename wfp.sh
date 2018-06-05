@@ -55,10 +55,11 @@ done
 #---------------------------------------#
 if [[ -z $SSID ]]; then
   echo "WiFi Password Extractor"
-  echo "Usage: wfp [SSID NAME]"
-  #echo " "
-  echo "Options:"
-  echo " -l     List all known system connections"
+  echo "  Usage:"
+  echo "  wfp [SSID NAME]"
+  echo " "
+  echo "  Options:"
+  echo "   -l     List all known system connections"
 
   if [[ ! -f /usr/bin/wfp ]]; then
     printf "First run prompts to be installed to /usr/bin/ \n"

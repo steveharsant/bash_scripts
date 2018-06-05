@@ -63,5 +63,5 @@ if [[ -f /etc/NetworkManager/system-connections/$1 ]]
     PSK=`sudo cat /etc/NetworkManager/system-connections/$1 | grep psk= | sed 's/^.\{4\}//g'`
     printf "Password for ${YELLOW}$1${WHITE} is ${GREEN}$PSK${WHITE} \n"
   else
-    printf "${FAIL} No password for $1 found \n"
+    printf "${FAIL} No password for ${YELLOW}$1${WHITE} found \n"
 fi

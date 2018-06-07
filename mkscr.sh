@@ -26,7 +26,7 @@
 if [[ -z $1 ]]; then
   echo "Make Script From Template"
   echo "  Usage:"
-  echo "  mkscr [FILENAME]"
+  echo "   mkscr [FILENAME]"
   echo " "
   echo "  Options:"
   echo "   -p     Set path other than default. Excluding a path will"

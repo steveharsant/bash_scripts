@@ -17,10 +17,6 @@
 #                                                   #
 #===================================================#
 
-#To Do:
-#Catch copy errors for when a path is set without the -p switch
-#Print warning when doing mkscr filename to warn that no extension is set
-
 #===================================================#
 #                                                   #
 #                 Usage Explanation                 #
@@ -33,8 +29,8 @@ if [[ -z $1 ]]; then
   echo "  mkscr [FILENAME]"
   echo " "
   echo "  Options:"
-  echo "   -p     Set path other than default. Excluding a path way"
-  echo "          will create a new script the present working directory"
+  echo "   -p     Set path other than default. Excluding a path will"
+  echo "          create a new script the present working directory"
   echo "   -s     Print settings"
   echo "   -v     Print version"
   echo ""
@@ -98,11 +94,23 @@ BATTMP="${TEMPLATEPATH}/template.bat" #Path to BATCH template
 
 #===================================================#
 #                                                   #
-#                       Swithes                     #
+#                     Test Input                    #
 #                                                   #
 #===================================================#
 
-TESTARG="$(echo ${1} | head -c 1)"
+#Test Path#
+#---------#
+TESTPATH="${SCRIPTPATH}/${SCRIPTNAME}"
+
+if [[ ${TESTPATH} == *"//"* ]]; then
+  printf "${FAIL} Missing -p switch \n"
+  exit 1
+fi
+
+
+#Test Arguements#
+#---------------#
+TESTARG="$(echo ${SCRIPTNAME} | head -c 1)"
 
 if [[ ! ${TESTARG} = "-" ]]; then
   FILEEXTENSION="${SCRIPTNAME##*.}"
@@ -122,9 +130,16 @@ if [[ ! ${TESTARG} = "-" ]]; then
   else
     FILEPATH="${BASHTMP}"
     SCRIPTPATH="${BASHPATH}"
+    ASSUME="1"
   fi
 
 fi
+
+#===================================================#
+#                                                   #
+#                       Swithes                     #
+#                                                   #
+#===================================================#
 
 while getopts ":p:v|:s" OPT ; do
   case $OPT in
@@ -158,17 +173,17 @@ while getopts ":p:v|:s" OPT ; do
       ;;
 
     s)
-      echo "mksrc path: ${MYPATH}"
+      echo "mksrc path:                      ${MYPATH}"
       echo ""
-      echo "Scripts top level direcotry: ${SCRIPTPATH}"
-      echo "Bash scripts direcotry: ${BASHPATH}"
-      echo "Powershell scripts direcotry: ${PSHELLPATH}"
-      echo "Batch scripts direcotry: ${BATPATH}"
+      echo "Scripts top level direcotry:     ${SCRIPTPATH}"
+      echo "Bash scripts direcotry:          ${BASHPATH}"
+      echo "Powershell scripts direcotry:    ${PSHELLPATH}"
+      echo "Batch scripts direcotry:         ${BATPATH}"
       echo ""
-      echo "Template path: ${TEMPLATEPATH}"
-      echo "Bash script template: ${BASHTMP}"
-      echo "Powershell script template: ${PSHELLTMP}"
-      echo "Batch script template: ${BATTMP}"
+      echo "Template path:                   ${TEMPLATEPATH}"
+      echo "Bash script template:            ${BASHTMP}"
+      echo "Powershell script template:      ${PSHELLTMP}"
+      echo "Batch script template:           ${BATTMP}"
 
       exit 0
       ;;

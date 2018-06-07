@@ -30,7 +30,7 @@ if [[ -z $1 ]]; then
   echo " "
   echo "  Options:"
   echo "   -p     Set path other than default. Excluding a path will"
-  echo "          create a new script the present working directory"
+  echo "          create a new script the current working directory"
   echo "   -s     Print settings"
   echo "   -v     Print version"
   echo ""
@@ -98,7 +98,7 @@ BATTMP="${TEMPLATEPATH}/template.bat" #Path to BATCH template
 #                                                   #
 #===================================================#
 
-#Test Path#
+#Test Path For Valid Input#
 #---------#
 TESTPATH="${SCRIPTPATH}/${SCRIPTNAME}"
 
@@ -112,23 +112,23 @@ fi
 #---------------#
 TESTARG="$(echo ${SCRIPTNAME} | head -c 1)"
 
-if [[ ! ${TESTARG} = "-" ]]; then
+if [[ ! ${TESTARG} = "-" ]]; then #If switch
   FILEEXTENSION="${SCRIPTNAME##*.}"
 
-  if [[ ${FILEEXTENSION} = "sh" ]]; then
+  if [[ ${FILEEXTENSION} = "sh" ]]; then #If bash script extension
     FILEPATH="${BASHTMP}"
     SCRIPTPATH="${BASHPATH}"
 
-  elif [[ ${FILEEXTENSION} = "ps1" ]]; then
+  elif [[ ${FILEEXTENSION} = "ps1" ]]; then #If Powershell script extension
     FILEPATH="${PSHELLTMP}"
     SCRIPTPATH="${PSHELLPATH}"
 
-  elif [[ ${FILEEXTENSION} = "bat" ]]; then
+  elif [[ ${FILEEXTENSION} = "bat" ]]; then #If batch script extension
     FILEPATH="${BATTMP}"
     SCRIPTPATH="${BATPATH}"
 
   else
-    FILEPATH="${BASHTMP}"
+    FILEPATH="${BASHTMP}" #If no extension found assume bash script
     SCRIPTPATH="${BASHPATH}"
     ASSUME="1"
   fi
@@ -144,7 +144,8 @@ fi
 while getopts ":p:v|:s" OPT ; do
   case $OPT in
 
-    p)
+    p) #Denotes pathway for script to be saved. If no pathway given,
+       #save in the current working directory.
        SCRIPTPATH=$(dirname ${OPTARG})
        SCRIPTNAME=$(basename ${OPTARG})
        FILEEXTENSION="${SCRIPTNAME##*.}"
@@ -154,25 +155,21 @@ while getopts ":p:v|:s" OPT ; do
          exit 1
        fi
 
-       if [[ ${SCRIPTNAME} = ${FILEEXTENSION} ]]; then
-          #printf "${WARN} No extension given. Assuming bash script \n"
+       if [[ ${SCRIPTNAME} = ${FILEEXTENSION} ]]; then #If no extension found assume bash script
           ASSUME="1"
           FILEPATH="${TEMPLATEPATH}/template.sh"
 
         elif [[ ${FILEEXTENSION} = "sh" ]]; then
           FILEPATH="${TEMPLATEPATH}/template.sh"
        fi
-
-
-
       ;;
 
-    v)
+    v) #Prints version number
       echo "version 1.0"
       exit 0
       ;;
 
-    s)
+    s) #Prints settings
       echo "mksrc path:                      ${MYPATH}"
       echo ""
       echo "Scripts top level direcotry:     ${SCRIPTPATH}"
@@ -184,7 +181,8 @@ while getopts ":p:v|:s" OPT ; do
       echo "Bash script template:            ${BASHTMP}"
       echo "Powershell script template:      ${PSHELLTMP}"
       echo "Batch script template:           ${BATTMP}"
-
+      echo ""
+      echo "To change settings, edit the ${MYPATH}/mkscr file"
       exit 0
       ;;
 
@@ -206,21 +204,21 @@ done
 #                                                   #
 #===================================================#
 
-if [[ -d ${SCRIPTPATH}/${SCRIPTNAME} ]]; then
+if [[ -d ${SCRIPTPATH}/${SCRIPTNAME} ]]; then #Tests if only directory is given
   printf "${FAIL} No filename specified \n"
   exit 1
 
-elif [[ -f ${SCRIPTPATH}/${SCRIPTNAME} ]]; then
+elif [[ -f ${SCRIPTPATH}/${SCRIPTNAME} ]]; then #Tests if file exists
   printf "${FAIL} File already exists \n"
   exit 1
 
 else
 
-  if [[ ${ASSUME} = "1" ]]; then
+  if [[ ${ASSUME} = "1" ]]; then #Prints warning if assuming bash script
     printf "${WARN} No known file extension. Assuming bash script \n"
   fi
 
-  cp ${FILEPATH} ${SCRIPTPATH}/${SCRIPTNAME}
-  chmod +x ${SCRIPTPATH}/${SCRIPTNAME}
+  cp ${FILEPATH} ${SCRIPTPATH}/${SCRIPTNAME} #Copies template
+  chmod +x ${SCRIPTPATH}/${SCRIPTNAME} #Sets new script as executable 
   exit 0
 fi

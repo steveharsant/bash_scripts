@@ -5,7 +5,7 @@
 #               Author: Steven Harsant              #
 #                  Date: 06/06/2018                 #
 #                   Version: 1.0                    #
-#===================================================#"
+#===================================================#
 #                                                   #
 #   Copies a script template from a directory and   #
 #   places it in default directory and renames it   #

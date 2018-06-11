@@ -4,11 +4,12 @@
 #                  Random Background                #
 #               Author: Steven Harsant              #
 #                  Date: 07/06/2018                 #
-#                   Version: 1.0                    #
-#===================================================#"
+#                   Version: 1.1                    #
+#===================================================#
 #                                                   #
 #      Randomises a background from a dirctory      #
-#                                                   #
+#       OR downloads and sets Bings image of        #
+#            the day as as the background           #
 #===================================================#
 #                                                   #
 #       I accept no liability. No warranty.         #
@@ -22,11 +23,15 @@
 #                                                   #
 #===================================================#
 
-#Human Readable Aguement Variables#
-#---------------------------------#
-VAR1=$1
-VAR2=$2
-VAR3=$3
+#Environment Variables#
+#---------------------#
+USERNAME=`awk -F'[/:]' '{if ($3 >= 1000 && $3 != 65534) print $1}' /etc/passwd | head -n 1` #Logged in username
+HOMEPATH="/home/${USERNAME}" #Logged in user homepath
+
+#User Options#
+#------------#
+BACKGROUNDPATH=(${HOMEPATH}/Pictures/wallpapers)      #Path to backgrounds directory.
+SCREENDIMENSIONS="1920x1080"                          #Set screen dimensions for the attached monitor.
 
 #Output Colour Variables#
 #-----------------------#
@@ -43,23 +48,50 @@ PASS=${GREEN}'PASS:'${WHITE} #PASS MESSAGES
 INFO=${YELLOW}'INFO:'${WHITE} #INFO MESSAGES
 HINT=${BLUE}'HINT:'${WHITE} #HINT MESSAGES
 
-#Environment Variables#
-#---------------------#
-SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )" #Script path
-USERNAME=`awk -F'[/:]' '{if ($3 >= 1000 && $3 != 65534) print $1}' /etc/passwd | head -n 1` #Logged in username
-HOMEPATH="/home/${USERNAME}" #Logged in user homepath
-
-BACKGROUNDPATH=(${HOMEPATH}/Pictures/wallpapers) #Path to backgrounds directory. Only change this variable
-
-BACKGROUNDS=($BACKGROUNDPATH/*)
-BACKGROUNDCOUNT=`ls ${BACKGROUNDPATH} -l | grep -v ^l | wc -l`; BACKGROUNDCOUNT="$((BACKGROUNDCOUNT - 2))"
-RANDNUM=`shuf -i 0-${BACKGROUNDCOUNT} -n 1`
-
 #===================================================#
 #                                                   #
 #                     Functions                     #
 #                                                   #
 #===================================================#
+
+function GETBINGIMAGE { #Downloads Bing's image of the day.
+
+  wget "https://www.bing.com/HPImageArchive.aspx?format=xml&idx=0&n=1&mkt=en-US" --output-document=/tmp/bingimage.xml > /dev/null 2>&1
+
+  URLBASE=$(xmllint --xpath "string(//images/image/urlBase)" /tmp/bingimage.xml)
+  NAME=$(xmllint --xpath "string(//images/image/startdate)" /tmp/bingimage.xml)
+
+  if [[ -f ${BACKGROUNDPATH}/${NAME}.jpg ]]; then
+    printf "${INFO} Todays Bing image of the day already exists. Setting image from local cache \n"
+  else
+    wget "https://bing.com${URLBASE}_${SCREENDIMENSIONS}.jpg" --output-document=${BACKGROUNDPATH}/${NAME}.jpg > /dev/null 2>&1
+  fi
+
+  gsettings set org.gnome.desktop.background picture-uri "file://${BACKGROUNDPATH}/${NAME}.jpg"
+
+  exit 0
+}
+
+#===================================================#
+#                                                   #
+#                 Usage Explanation                 #
+#                                                   #
+#===================================================#
+function USAGE {
+
+    echo "Random Backgound Image"
+    echo "  Usage:"
+    echo "  rbk [ARGUMENT]"
+    echo " "
+    echo "  Options:"
+    echo "   -b     Download Bing's image of the day and apply as background."
+    echo "          Backgrounds are currently downloaded to:"
+    echo "          ${BACKGROUNDPATH}"
+    echo "   -h     Display help"
+    echo "   -v     Display version"
+
+    exit 0
+}
 
 #===================================================#
 #                                                   #
@@ -67,31 +99,22 @@ RANDNUM=`shuf -i 0-${BACKGROUNDCOUNT} -n 1`
 #                                                   #
 #===================================================#
 
-while getopts ":h:v" opt; do
+while getopts ":vhb" opt; do
   case $opt in
+    b)
+      GETBINGIMAGE
+      ;;
+
     h)
-    #===================================================#
-    #                                                   #
-    #                 Usage Explanation                 #
-    #                                                   #
-    #===================================================#
-
-      echo "Random Backgound Image"
-      echo "  Usage:"
-      echo "  rbk [ARGUMENT]"
-      echo " "
-      echo "  Options:"
-      echo "   -h     Display help"
-
-      exit 0
+      USAGE
       ;;
 
     v)
-      echo "version 1.0"
+      echo "version 1.1"
+      exit 0
       ;;
 
     :)
-      #STATEMENTS >&2
       ;;
 
   \?)
@@ -101,13 +124,8 @@ while getopts ":h:v" opt; do
   esac
 done
 
-
-#===================================================#
-#                                                   #
-#                      Start                        #
-#                                                   #
-#===================================================#
-
-
+BACKGROUNDS=($BACKGROUNDPATH/*)
+BACKGROUNDCOUNT=`ls ${BACKGROUNDPATH} -l | grep -v ^l | wc -l`; BACKGROUNDCOUNT="$((BACKGROUNDCOUNT - 2))"
+RANDNUM=`shuf -i 0-${BACKGROUNDCOUNT} -n 1`
 
 gsettings set org.gnome.desktop.background picture-uri "file://${BACKGROUNDS[${RANDNUM}]}"

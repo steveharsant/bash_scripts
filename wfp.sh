@@ -94,6 +94,8 @@ done
 #---------------------------------------#
 if [[ -z $SSID ]]; then
   echo "WiFi Password Extractor"
+  echo "Author: Steven Harsant"
+  echo ""
   echo "  Usage:"
   echo "  wfp [SSID NAME]"
   echo " "

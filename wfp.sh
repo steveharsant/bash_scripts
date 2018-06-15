@@ -4,8 +4,33 @@
 #                 WFP: WiFi Password                #
 #               Author: Steven Harsant              #
 #                  Date: 5/6/2018                   #
-#                   Version: 1.2                    #
+#                   Version: 1.3                    #
 #===================================================#
+
+#===================================================#
+#                                                   #
+#                  Version History                  #
+#                                                   #
+#===================================================#
+
+#Version 1.3#
+#-----------#
+# Added -r switch to remove known Network Manager configurations
+# Added -v switch to display version number
+
+#Version 1.2#
+#-----------#
+# Added -l switch option to list known Network Manager configurations
+
+#Version 1.1#
+#-----------#
+# Minor bug fixes. Added error handling
+
+#Version 1.0#
+#-----------#
+# Initial creation of script.
+
+
 
 #Set Colour Variables For Output#
 #-------------------------------#
@@ -28,16 +53,31 @@ SCRIPTNAME=`basename "$0"`
 #Human Readable Variables#
 #------------------------#
 SSID=$1
+RMSSID=$2
 
 #Script Arguements#
 #-----------------#
 
 # -l Lists all known system connections
-while getopts ":l:" opt; do
+while getopts ":l:r:v" opt; do
   case $opt in
     l)
       echo "-l does not accept parameters" >&2
       exit 1
+      ;;
+    r)
+      if [[ ! -f "/etc/NetworkManager/system-connections/${RMSSID}" ]]; then
+        printf "${FAIL} No configuration for ${YELLOW}${RMSSID}${WHITE} exists \n"
+        exit 1
+      else
+        sudo rm "/etc/NetworkManager/system-connections/${RMSSID}"
+        printf "${PASS} Configuration for ${YELLOW}${RMSSID}${WHITE} has been successfully removed \n"
+        exit 0
+      fi
+      ;;
+    v)
+      echo "version 1.3"
+      exit 0
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -50,7 +90,6 @@ while getopts ":l:" opt; do
   esac
 done
 
-
 #If No Arguements Are Passed Output Info#
 #---------------------------------------#
 if [[ -z $SSID ]]; then
@@ -60,6 +99,7 @@ if [[ -z $SSID ]]; then
   echo " "
   echo "  Options:"
   echo "   -l     List all known system connections"
+  echo "   -r     Remove a known system connection"
 
   if [[ ! -f /usr/bin/wfp ]]; then
     printf "First run prompts to be installed to /usr/bin/ \n"

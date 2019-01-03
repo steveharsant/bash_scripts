@@ -100,7 +100,7 @@ fi
 ENTRY=`grep -rnwil ${HOMEPATH}/.remmina -e name=${CONNECTIONSTRING}`
 
 #Initiate connection with Remmina
-printf "${INFO} Connecting to ${YELLOW}${CONNECTIONSTRING}${WHITE}...\n"
+printf "${INFO} Connecting to ${YELLOW}${CONNECTIONSTRING}${WHITE}\n"
 remmina -c ${ENTRY}  </dev/null &>/dev/null &
 
 exit 0

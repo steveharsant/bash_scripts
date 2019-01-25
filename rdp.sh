@@ -4,7 +4,7 @@
  #                      Remmina RDP                  #
  #               Author: Steven Harsant              #
  #                  Date: 02/01/2019                 #
- #                   Version: 0.1                    #
+ #                   Version: 0.2                    #
  #===================================================#"
  #                                                   #
  #                      Notes                        #
@@ -21,9 +21,26 @@
 
  #===================================================#
  #                                                   #
- #                     User Options                  #
+ #                     Functions                     #
  #                                                   #
  #===================================================#
+
+function USAGE { #Prints usage information about the script
+  echo "Remmina RDP (Version: 0.2)"
+  echo "Connect to a remote Windows computer with Remmina"
+  echo " "
+  echo "  Usage:"
+  echo "   rdp -ARGUMENT"
+  echo " "
+  echo "  Options:"
+  echo "   -h             Display help"
+  echo "   -k             Kill all active RDP sessions"
+  echo "   -l [string]    List known RDP connections"
+  echo "   -n             Create a new connection profile"
+  echo "   -v             Display version"
+
+  exit 0
+}
 
  #===================================================#
  #                                                   #
@@ -57,17 +74,49 @@ INFO=${YELLOW}'INFO:'${WHITE} #INFO MESSAGES
 WARN=${ORANGE}'WARN:'${WHITE} #INFO MESSAGES
 HINT=${BLUE}'HINT:'${WHITE} #HINT MESSAGES
 
- #===================================================#
- #                                                   #
- #                     Functions                     #
- #                                                   #
- #===================================================#
+#===================================================#
+#                                                   #
+#                       Swithes                     #
+#                                                   #
+#===================================================#
 
- #===================================================#
- #                                                   #
- #                       Swithes                     #
- #                                                   #
- #===================================================#
+while getopts ":h :k :l :n :v" opt; do
+ case $opt in
+   h)
+     USAGE
+     ;;
+   k)
+     pkill -f remmina
+     exit 0
+     ;;
+   l)
+      if [[ -z "$2" ]]; then
+        printf "${INFO} All known Remmina RDP connection profles: \n"
+        grep -rnwi ${HOMEPATH}/.remmina -e name |  cut -d= -f2
+      else
+        printf "${INFO} Known Remmina RDP connection profiles for ${YELLOW}${2}${WHITE} \n"
+        grep -rnwi ${HOMEPATH}/.remmina -e name=${2} |  cut -d= -f2
+      fi
+
+     exit 0
+     ;;
+   n)
+     remmina -n
+     exit 0
+     ;;
+   v)
+     echo "Version 0.2"
+     exit 0
+     ;;
+   :)
+     exit 0
+     ;;
+ \?)
+   echo "Invalid option: -$OPTARG" >&2
+   exit 1
+   ;;
+ esac
+done
 
  #===================================================#
  #                                                   #
@@ -93,6 +142,9 @@ fi
 #Check there is only 1 matching entry found
 if [[ ${ENTRYCOUNT} -gt 1 ]]; then
   printf "${FAIL} Too many Remmina RDP entries found. Please be more specific.\n"
+  printf "\n${HINT} RDP entries containing ${CONNECTIONSTRING}:\n"
+  grep -rnwi ${HOMEPATH}/.remmina -e name=${CONNECTIONSTRING} |  cut -d= -f2
+
   exit 1
 fi
 

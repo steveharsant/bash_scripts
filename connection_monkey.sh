@@ -87,16 +87,23 @@ if [ ${STATE} = "1" ] && [ -f ${HISTORY_FILE} ]; then
   DOWN_TIME=`\cat ${HISTORY_FILE}`
   UP_TIME=$(date +%s)
   DOWN_TOTAL=`expr ${UP_TIME} - ${DOWN_TIME}`
-  rm ${HISTORY_FILE}
+
+  if [[ ${DOWN_TOTAL} -gt 10 ]]; then
+    rm ${HISTORY_FILE}
+  fi
+
+echo $DOWN_TOTAL
 
   # Format DOWN_TOTAL value #
   #-------------------------#
-  UNIT="seconds"
-  if [[ ${DOWN_TOTAL} -gt 60 ]]; then
-    DOWN_TOTAL=`expr ${DOWN_TOTAL} / 60`
-    UNIT="minutes"
+if [[ ${DOWN_TOTAL} -gt 10 ]]; then
+    UNIT="seconds"
+    if [[ ${DOWN_TOTAL} -gt 60 ]]; then
+      DOWN_TOTAL=`expr ${DOWN_TOTAL} / 60`
+      UNIT="minutes"
+    fi
+    notify -i "Downtime Detected" -t "Your internet was down for ${DOWN_TOTAL} ${UNIT}"
   fi
-  notify -i "Downtime Detected" -t "Your internet was down for ${DOWN_TOTAL} ${UNIT}"
 fi
 
  #===================================================#

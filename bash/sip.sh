@@ -4,7 +4,7 @@
 # A simple way to output ip address information
 
 # Get IP address and loop through output
-ip a s  | while read -r line ; do
+ip a s  | while read -r LINE ; do
   # If the line starts with a digit [0-9], get contents between : characters
   if [[ $LINE =~ ^[0-9] ]];then
     INT=$(grep -oP '(?<=:).*?(?=:)' <<< "$LINE" | tr -d ' ')

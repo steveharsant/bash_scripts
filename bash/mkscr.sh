@@ -4,40 +4,25 @@
 #              Make Script From Template            #
 #               Author: Steven Harsant              #
 #                  Date: 06/06/2018                 #
-#                   Version: 1.0                    #
-#===================================================#
-#                                                   #
-#   Copies a script template from a directory and   #
-#   places it in default directory and renames it   #
-#                                                   #
-#===================================================#
-#                                                   #
-#       I accept no liability. No warranty.         #
-#               Use at your own risk.               #
-#                                                   #
-#===================================================#
-
-#===================================================#
-#                                                   #
-#                 Usage Explanation                 #
-#                                                   #
+#                   Version: 1.1                    #
 #===================================================#
 
 if [[ -z $1 ]]; then
-  echo "Make Script From Template"
-  echo "  Usage:"
-  echo "   mkscr [FILENAME]"
-  echo " "
-  echo "  Options:"
-  echo "   -p     Set path other than default. Excluding a path will"
-  echo "          create a new script the current working directory"
-  echo "   -s     Print settings"
-  echo "   -v     Print version"
-  echo ""
-  echo "  Examples:"
-  echo "   mkscr NewScript.sh"
-  echo "   mkscr -p NewScript.sh"
-  echo "   mkscr -p ~/path/to/destination/NewScript.sh"
+  printf "Make Script From Template \n"
+  printf "  Usage: \n"
+  printf "   mkscr [FILENAME] \n"
+  printf "  \n"
+  printf "  Options: \n"
+  printf "   -p     Set path other than default. Excluding a path will \n"
+  printf "          create a new script the current working directory \n"
+  printf "   -s     Print settings \n"
+  printf "   -v     Print version \n"
+  printf " \n"
+  printf "  Examples: \n"
+  printf "   mkscr NewScript.sh \n"
+  printf "   mkscr -p NewScript.sh \n"
+  printf "   mkscr -p ~/path/to/destination/NewScript.sh \n"
+
   exit 0
 fi
 
@@ -219,6 +204,6 @@ else
   fi
 
   cp ${FILEPATH} ${SCRIPTPATH}/${SCRIPTNAME} #Copies template
-  chmod +x ${SCRIPTPATH}/${SCRIPTNAME} #Sets new script as executable 
+  chmod +x ${SCRIPTPATH}/${SCRIPTNAME} #Sets new script as executable
   exit 0
 fi

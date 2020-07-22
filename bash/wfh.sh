@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# v. 0.2
+# v. 0.3
 #
 # TODO:
 # - Add arguements for:
@@ -66,5 +66,10 @@ if [[ -f "${RDP_FILE_PATH}/${SESSION}" ]]; then
   rm -f "${RDP_FILE_PATH}/${SESSION}"
 else
   printf "${FAIL} No .rdp file found in ${RDP_FILE_PATH}\n"
+
+  if command -v notify-send; then
+  notify-send "No .rdp file found"
+  fi
+
   exit 1
 fi

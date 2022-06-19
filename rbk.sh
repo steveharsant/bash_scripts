@@ -55,7 +55,7 @@ function print_version {
 }
 
 # Parse command line arguments
-while getopts "bd:hp:v" opt; do
+while getopts 'bd:hp:v' opt; do
   case $opt in
     b) get_bing_image ;;
     d) screen_dimensions="$OPTARG" ;;
